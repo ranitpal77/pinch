@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hand Frame — Augmented Reality Vision</title>
+  <meta name="description" content="Real-time client-side dual-hand landmark tracking with dynamic quad clipping and gesture-based visual styles.">
+  <meta name="theme-color" content="#0a0c14">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- MediaPipe Hands & Camera Utils via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.4.1675466862/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469240/hands.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <!-- Hidden webcam video source element -->
+  <video id="webcam-video" playsinline muted></video>
+
+  <!-- Main Fullscreen Rendering Canvas -->
+  <canvas id="output-canvas"></canvas>
+
+  <!-- Bottom Left Info Caption -->
+  <div class="bottom-left-caption" id="bottom-left-caption">
+    <div class="caption-style-line">Style: <span id="caption-style-name">Thermal</span></div>
+    <div class="caption-instruction-line">Form a rectangle with both hands thumb and index. Pinch and release to change style.</div>
+  </div>
+
+  <!-- Error & Permission Modal (Shown only if camera is blocked / unsupported) -->
+  <div class="modal-backdrop hidden" id="error-modal">
+    <div class="modal-card">
+      <div class="modal-icon error-icon">
+        <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      <h2 class="modal-title" id="error-modal-title">Camera Access Required</h2>
+      <p class="modal-body" id="error-modal-body">
+        Hand Frame requires access to your webcam to track hands locally in your browser.
+      </p>
+      <div class="modal-actions">
+        <button class="primary-btn" id="btn-retry-camera">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+          Grant Permission & Retry
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application Modules -->
+  <script src="js/styles.js"></script>
+  <script src="js/quad.js"></script>
+  <script src="js/gestures.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

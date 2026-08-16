@@ -1,0 +1,16 @@
+# ==============================================================================
+# Netlify Deployment Configuration for Hand Frame Web App
+# ==============================================================================
+
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Allow camera access in modern browser permission policies
+    Permissions-Policy = "camera=*, microphone=()"
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Cache-Control = "public, max-age=3600"
