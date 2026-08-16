@@ -40,7 +40,6 @@ pinch/
 │   ├── gestures.js     # Unified Gesture Engine (1-hand pinch, 2-hand pinch, approach detection)
 │   ├── styles.js       # Pluggable visual style filters registry (all 9 filters)
 │   └── ui.js           # HUD telemetry, gesture meters, toasts, snapshots, error modals
-├── netlify.toml        # Netlify headers for camera permissions & security
 └── README.md           # Documentation and quickstart guide
 ```
 
@@ -50,37 +49,20 @@ pinch/
 
 Since the app accesses the webcam API (`getUserMedia`), it must be served over `localhost` or `https://`.
 
-### Option 1: Python HTTP Server (Built-in)
+### Option 1: Node.js (Recommended for JS)
+```bash
+npx serve .
+```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Option 2: VS Code Live Server Extension
+Right-click `index.html` $\to$ **Open with Live Server**.
+
+### Option 3: Python HTTP Server
 ```bash
 python -m http.server 3000
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Option 2: Node `serve` or `npx http-server`
-```bash
-npx serve .
-# or
-npx http-server -p 3000
-```
-
-### Option 3: VS Code Live Server Extension
-Right-click `index.html` $\to$ **Open with Live Server**.
-
----
-
-## 🌐 Deploy to Netlify
-
-### Method A: Drag & Drop (Instant)
-1. Go to [Netlify Drop](https://app.netlify.com/drop).
-2. Drag and drop the `pinch` folder into the upload area.
-3. Your app is live instantly with automatic HTTPS!
-
-### Method B: Git Repository
-1. Push this project to GitHub / GitLab.
-2. In Netlify, click **"Add new site"** $\to$ **"Import an existing project"**.
-3. Select your repository.
-4. Netlify will automatically detect `netlify.toml` (`publish = "."`).
-5. Click **Deploy Site**.
 
 ---
 
