@@ -1,15 +1,15 @@
 /**
  * ============================================================================
- * HAND FRAME — Unified Gesture Recognition Engine
+ * HAND FRAME — Unified Gesture Recognition Engine (Sequential Cycling)
  * ============================================================================
  * Implements debounced, hysteresis-based recognition for:
  *   1) One-hand Pinch & Release (Single hand thumb+index pinch -> release)
- *   2) Two-hand Pinch (Simultaneous pinch on both hands within ~180ms window -> release)
+ *   2) Two-hand Pinch (Simultaneous pinch on both hands within ~220ms window -> release)
  *   3) Hands Approaching (Hands move from far to near when unpinched)
  *
  * Guarantees:
- *   - Shared 700ms cooldown window across all gestures
- *   - Uniform random style selection from remaining styles (never picks current style)
+ *   - Shared 750ms cooldown window across all gestures
+ *   - Sequential cycle through the styles list: 1 -> 2 -> 3 -> ... -> 9 -> 1
  *   - Two-hand pinch takes strict precedence over one-hand pinches
  *   - Clear real-time status output for HUD visual meters
  */
@@ -73,9 +73,9 @@
     }
 
     /**
-     * Selects a uniformly random style from all styles except the currently active one.
+     * Cycles to the next style sequentially (1 -> 2 -> ... -> 9 -> 1).
      */
-    triggerRandomStyleChange(gestureType, gestureLabel) {
+    triggerSequentialStyleChange(gestureType, gestureLabel) {
       const now = performance.now();
       if (now - this.lastTriggerTime < COOLDOWN_MS) {
         return; // Guarded by shared cooldown
@@ -84,9 +84,8 @@
       const total = this.styles.length;
       if (total <= 1) return;
 
-      // Pick a random offset between 1 and (total - 1)
-      const offset = 1 + Math.floor(Math.random() * (total - 1));
-      const nextIndex = (this.currentStyleIndex + offset) % total;
+      // Sequential progression to the next style
+      const nextIndex = (this.currentStyleIndex + 1) % total;
 
       this.currentStyleIndex = nextIndex;
       this.lastTriggerTime = now;
@@ -97,6 +96,11 @@
 
       // Dispatch callback with new style and trigger metadata
       this.onStyleChange(this.styles[this.currentStyleIndex], gestureType, gestureLabel);
+    }
+
+    // Alias for backward compatibility
+    triggerRandomStyleChange(gestureType, gestureLabel) {
+      this.triggerSequentialStyleChange(gestureType, gestureLabel);
     }
 
     /**
@@ -153,7 +157,7 @@
             // Pinched and then released!
             this.leftHandPinchState = 'idle';
             if (!inCooldown) {
-              this.triggerRandomStyleChange('one-hand-pinch', 'One-Hand Pinch & Release');
+              this.triggerSequentialStyleChange('one-hand-pinch', 'One-Hand Pinch & Release');
             }
           }
         }
@@ -215,7 +219,7 @@
           this.rightHandPinchState = 'idle';
 
           if (!inCooldown) {
-            this.triggerRandomStyleChange('two-hand-pinch', '⚡ Two-Hand Dual Pinch!');
+            this.triggerSequentialStyleChange('two-hand-pinch', '⚡ Two-Hand Dual Pinch!');
           }
           return this.liveMetrics;
         }
@@ -225,7 +229,7 @@
       if (this.leftHandPinchState === 'pinched' && isLeftReleased) {
         this.leftHandPinchState = 'idle';
         if (!this.dualPinchSuppressSingle && !inCooldown) {
-          this.triggerRandomStyleChange('one-hand-pinch', 'Left Hand Pinch & Release');
+          this.triggerSequentialStyleChange('one-hand-pinch', 'Left Hand Pinch & Release');
         }
         if (!this.leftHandPinchState && !this.rightHandPinchState) {
           this.dualPinchSuppressSingle = false;
@@ -235,7 +239,7 @@
       if (this.rightHandPinchState === 'pinched' && isRightReleased) {
         this.rightHandPinchState = 'idle';
         if (!this.dualPinchSuppressSingle && !inCooldown) {
-          this.triggerRandomStyleChange('one-hand-pinch', 'Right Hand Pinch & Release');
+          this.triggerSequentialStyleChange('one-hand-pinch', 'Right Hand Pinch & Release');
         }
         if (!this.leftHandPinchState && !this.rightHandPinchState) {
           this.dualPinchSuppressSingle = false;
@@ -274,7 +278,7 @@
         if (this.approachStartedFar && normalizedDistance <= APPROACH_NEAR_THRESHOLD) {
           this.approachStartedFar = false;
           if (!inCooldown) {
-            this.triggerRandomStyleChange('hands-approaching', '👐 Hands Approached!');
+            this.triggerSequentialStyleChange('hands-approaching', '👐 Hands Approached!');
           }
         }
       } else {

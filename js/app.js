@@ -54,9 +54,9 @@
       );
     });
 
-    // Default to Thermal or first style
-    activeStyle = styles[2] || styles[0];
-    gestureEngine.currentStyleIndex = 2;
+    // Default to the first style in sequence (Red Tint)
+    activeStyle = styles[0];
+    gestureEngine.currentStyleIndex = 0;
 
     // Build Style Selector Dock
     uiController.buildStyleDock(styles, (selectedIndex) => {
